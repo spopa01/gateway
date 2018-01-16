@@ -39,7 +39,7 @@ public class PaymentController {
     public Mono<ResponseEntity<Void>> deletePaymentById(@PathVariable(value = "id") String id) {
         return paymentRepository.findById(id)
                 .flatMap(
-                        payment -> paymentRepository.deleteById(id).then(Mono.just(new ResponseEntity<Void>(OK)))
+                        savedPayment -> paymentRepository.deleteById(id).then(Mono.just(new ResponseEntity<Void>(OK)))
                 ).defaultIfEmpty(
                         new ResponseEntity<>(NOT_FOUND)
                 );
@@ -63,10 +63,10 @@ public class PaymentController {
                                                            @Valid @RequestBody Payment payment) {
         return paymentRepository.findById(id)
                 .flatMap(
-                        existingPayment ->
+                        savedPayment ->
                                 paymentRepository.save(
                                         Payment.of(
-                                                existingPayment.getId(),
+                                                savedPayment.getId(),
                                                 payment.getFrom(),
                                                 payment.getTo(),
                                                 payment.getAmount())
